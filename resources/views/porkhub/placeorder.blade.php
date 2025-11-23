@@ -62,6 +62,7 @@
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
                         Product List
                     </h1>
+                    <h1>Welcome to place order</h1>
                     <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         Manage all your premium pork products in one place.
                     </p>
