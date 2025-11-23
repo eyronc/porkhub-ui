@@ -82,5 +82,52 @@ class PorkHubController extends Controller
         return redirect('/porkhub/list')->with('success', 'Product deleted successfully.');
     }
     
+    public function placeOrder()
+    {
+        $product = PorkHub::all();
+        return view('porkhub.placeOrder', compact('product'));
+    }
+
+    public function addOrder(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id'   => 'required|integer|exists:pork_hubs,id',
+            'quantity'     => 'required|integer|min:1',
+            'buyer_name'   => 'required|string|max:255',
+            'contact'      => 'nullable|string|max:255',
+            'address'      => 'nullable|string',
+        ]);
+
+        $product = PorkHub::findOrFail($validated['product_id']);
+
+        if ($product->stock < $validated['quantity']) {
+            return redirect()->back()
+                ->withErrors(['quantity' => 'Requested quantity exceeds available stock.'])
+                ->withInput();
+        }
+
+        \DB::beginTransaction();
+        try {
+            \DB::table('orders')->insert([
+                'product_id'  => $product->id,
+                'quantity'    => $validated['quantity'],
+                'buyer_name'  => $validated['buyer_name'],
+                'contact'     => $validated['contact'] ?? null,
+                'address'     => $validated['address'] ?? null,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+
+            $product->decrement('stock', $validated['quantity']);
+
+            \DB::commit();
+
+            return redirect('/porkhub/placeorder')->with('success', 'Order placed successfully.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return redirect()->back()->with('error', 'Unable to place order.')->withInput();
+        }
+    }
+
 }
     

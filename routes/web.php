@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/porkhub/edit/{id}', [PorkHubController::class, 'editProduct']);
     Route::post('/porkhub/edit/{id}', [PorkHubController::class, 'updateProduct']);
     Route::post('/porkhub/delete/{id}', [PorkHubController::class, 'deleteProduct']);
+    Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder']);
 });
 
 require __DIR__.'/auth.php';
