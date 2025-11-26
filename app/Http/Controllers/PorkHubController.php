@@ -91,7 +91,7 @@ class PorkHubController extends Controller
     public function addOrder(Request $request)
     {
         $validated = $request->validate([
-            'product_id'   => 'required|integer|exists:pork_hubs,id',
+            'product_id'   => 'required|integer|exists:dishes,id',
             'quantity'     => 'required|integer|min:1',
             'buyer_name'   => 'required|string|max:255',
             'contact'      => 'nullable|string|max:255',

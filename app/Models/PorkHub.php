@@ -9,6 +9,9 @@ class PorkHub extends Model
 {
     /** @use HasFactory<\Database\Factories\PorkHubFactory> */
     use HasFactory;
+
+    protected $table = 'dishes';
+
     protected $fillable = [
     'product_name',
     'product_price',
