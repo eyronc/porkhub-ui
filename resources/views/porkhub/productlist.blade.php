@@ -104,19 +104,210 @@
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <div class="relative">
+                        <form method="GET" action="{{ url()->current() }}" class="relative flex items-center">
                             <input
+                                id="product-search"
+                                name="q"
                                 type="text"
+                                value="{{ request('q') }}"
                                 placeholder="Search products..."
                                 class="w-48 sm:w-64 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60 text-sm px-3 py-2 pl-9 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                autocomplete="off"
                             />
-                            <svg class="w-4 h-4 absolute left-2.5 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
-                            </svg>
+                            <button type="submit" class="absolute left-0 ml-2 top-2.5 text-gray-400" aria-label="Search">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
+                                </svg>
+                            </button>
+
+                            @if(request('q'))
+                                <a href="{{ request()->url() }}" class="ml-2 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">Clear</a>
+                            @endif
+                        </form>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const input = document.getElementById('product-search');
+                            const tbody = document.querySelector('table tbody');
+
+                            function createNoResultRow() {
+                                const tr = document.createElement('tr');
+                                tr.className = 'no-search-results';
+                                const td = document.createElement('td');
+                                td.colSpan = 8;
+                                td.className = 'px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400';
+                                td.textContent = 'No products match your search.';
+                                tr.appendChild(td);
+                                return tr;
+                            }
+
+                            function filterRows() {
+                                const q = input.value.trim().toLowerCase();
+                                const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('no-search-results'));
+                                let anyVisible = false;
+
+                                rows.forEach(row => {
+                                    const text = row.textContent.toLowerCase();
+                                    const matches = q === '' || text.indexOf(q) !== -1;
+                                    row.style.display = matches ? '' : 'none';
+                                    if (matches) anyVisible = true;
+                                });
+
+                                let noRow = tbody.querySelector('tr.no-search-results');
+                                if (!anyVisible) {
+                                    if (!noRow) tbody.appendChild(createNoResultRow());
+                                } else {
+                                    if (noRow) noRow.remove();
+                                }
+                            }
+
+                            input.addEventListener('input', filterRows);
+
+                            filterRows();
+                        });
+                    </script>
+                </div>
+                    
+                <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <label for="category-filter" class="text-sm text-gray-600 dark:text-gray-300 mr-2">Category</label>
+                            <select id="category-filter" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2">
+                                <option value="">All</option>
+                                @foreach($product->pluck('category')->unique()->filter()->values() as $cat)
+                                    <option value="{{ strtolower($cat) }}">{{ $cat }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <label for="stock-filter" class="text-sm text-gray-600 dark:text-gray-300 mr-2">Stock</label>
+                            <select id="stock-filter" class="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2">
+                                <option value="">All</option>
+                                <option value="in">In Stock (&gt; 20)</option>
+                                <option value="low">Low (1 - 20)</option>
+                                <option value="out">Out of Stock (0)</option>
+                            </select>
+
+                            <label for="price-min" class="text-sm text-gray-600 dark:text-gray-300 ml-4 mr-2">Price</label>
+                            <input id="price-min" type="number" min="0" placeholder="Min" class="w-20 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2" />
+                            <span class="text-sm text-gray-500 dark:text-gray-400 mx-1">—</span>
+                            <input id="price-max" type="number" min="0" placeholder="Max" class="w-20 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm px-3 py-2" />
+
+                            <button id="clear-filters" type="button" class="ml-4 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">
+                                Clear Filters
+                            </button>
                         </div>
                     </div>
-                </div>
 
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const tbody = document.querySelector('table tbody');
+                            if (!tbody) return;
+
+                            const searchInput = document.getElementById('product-search');
+                            const categorySelect = document.getElementById('category-filter');
+                            const stockSelect = document.getElementById('stock-filter');
+                            const priceMin = document.getElementById('price-min');
+                            const priceMax = document.getElementById('price-max');
+                            const clearBtn = document.getElementById('clear-filters');
+
+                            function createNoResultRow() {
+                                const tr = document.createElement('tr');
+                                tr.className = 'no-search-results';
+                                const td = document.createElement('td');
+                                td.colSpan = 8;
+                                td.className = 'px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400';
+                                td.textContent = 'No products match your filters.';
+                                tr.appendChild(td);
+                                return tr;
+                            }
+
+                            function parsePrice(text) {
+                                if (!text) return NaN;
+                                // strip non-numeric except dot and minus
+                                const num = text.replace(/[^\d.-]/g, '');
+                                return parseFloat(num);
+                            }
+
+                            function parseStock(text) {
+                                if (!text) return NaN;
+                                const m = text.match(/(-?\d+)/);
+                                return m ? parseInt(m[0], 10) : NaN;
+                            }
+
+                            function filterAll() {
+                                const q = (searchInput ? searchInput.value.trim().toLowerCase() : '').replace(/\s+/g, ' ');
+                                const catFilter = categorySelect ? categorySelect.value.trim().toLowerCase() : '';
+                                const stockFilter = stockSelect ? stockSelect.value : '';
+                                const min = priceMin && priceMin.value !== '' ? parseFloat(priceMin.value) : NaN;
+                                const max = priceMax && priceMax.value !== '' ? parseFloat(priceMax.value) : NaN;
+
+                                const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('no-search-results'));
+                                let anyVisible = false;
+
+                                rows.forEach(row => {
+                                    const cells = row.querySelectorAll('td');
+                                    // columns: 0 id, 1 name, 2 desc, 3 category, 4 price, 5 stock ...
+                                    const fullText = row.textContent.toLowerCase();
+                                    const categoryText = (cells[3] ? cells[3].textContent.toLowerCase() : '');
+                                    const priceText = (cells[4] ? cells[4].textContent : '');
+                                    const stockText = (cells[5] ? cells[5].textContent : '');
+
+                                    let matchesSearch = q === '' || fullText.indexOf(q) !== -1;
+                                    let matchesCategory = catFilter === '' || categoryText.indexOf(catFilter) !== -1;
+
+                                    const priceVal = parsePrice(priceText);
+                                    let matchesPrice = true;
+                                    if (!isNaN(min) && !isNaN(priceVal)) matchesPrice = priceVal >= min;
+                                    if (!isNaN(max) && !isNaN(priceVal)) matchesPrice = matchesPrice && priceVal <= max;
+                                    if ((!isNaN(min) && isNaN(priceVal)) || (!isNaN(max) && isNaN(priceVal))) {
+                                        // if row has no price and a bound is set, exclude it
+                                        matchesPrice = false;
+                                    }
+
+                                    const stockVal = parseStock(stockText);
+                                    let matchesStock = true;
+                                    if (stockFilter === 'in') matchesStock = !isNaN(stockVal) && stockVal > 20;
+                                    if (stockFilter === 'low') matchesStock = !isNaN(stockVal) && stockVal > 0 && stockVal <= 20;
+                                    if (stockFilter === 'out') matchesStock = !isNaN(stockVal) && stockVal === 0;
+
+                                    const visible = matchesSearch && matchesCategory && matchesPrice && matchesStock;
+                                    row.style.display = visible ? '' : 'none';
+                                    if (visible) anyVisible = true;
+                                });
+
+                                // remove any existing no-result rows
+                                const existing = tbody.querySelectorAll('tr.no-search-results');
+                                existing.forEach(e => e.remove());
+
+                                if (!anyVisible) {
+                                    tbody.appendChild(createNoResultRow());
+                                }
+                            }
+
+                            // wire events
+                            if (searchInput) searchInput.addEventListener('input', filterAll);
+                            if (categorySelect) categorySelect.addEventListener('change', filterAll);
+                            if (stockSelect) stockSelect.addEventListener('change', filterAll);
+                            if (priceMin) priceMin.addEventListener('input', filterAll);
+                            if (priceMax) priceMax.addEventListener('input', filterAll);
+
+                            clearBtn.addEventListener('click', function () {
+                                if (searchInput) searchInput.value = '';
+                                if (categorySelect) categorySelect.value = '';
+                                if (stockSelect) stockSelect.value = '';
+                                if (priceMin) priceMin.value = '';
+                                if (priceMax) priceMax.value = '';
+                                filterAll();
+                            });
+
+                            // initial run (in case there are query params or presets)
+                            filterAll();
+                        });
+                    </script>
+                </div>
                 <!-- Responsive table -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">

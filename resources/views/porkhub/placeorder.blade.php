@@ -54,7 +54,7 @@
         </div>
     </header>
 
-    <!-- Card layout (replace the table layout with this). This block can sit inside <main> replacing the table section. -->
+    <!-- Card layout -->
     <section class="pt-24 pb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
