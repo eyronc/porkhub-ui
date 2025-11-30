@@ -26,16 +26,11 @@
 
                 <!-- Navigation -->
                 <nav class="flex items-center space-x-8">
-                    <a href="{{ url('/') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 pb-1 pt-1">
-                        Home
-                    </a>
-                    <a href="\porkhub\list" class="text-sm font-medium text-red-600 dark:text-red-500 hover:text-red-700 transition-all duration-300 pb-1 pt-1">
+                    
+                    <a href="\porkhub\order" class="text-sm font-medium text-red-600 dark:text-red-500 hover:text-red-700 transition-all duration-300 pb-1 pt-1">
                         Products
                     </a>
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 pb-1 pt-1">
-                            Dashboard
-                        </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline-block">
                             @csrf
                             <button type="submit" class="bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105">
@@ -61,7 +56,7 @@
             <!-- Page header -->
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Place an Order</h1>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Menu</h1>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">A detailed view of the menu.</p>
                 </div>
             </div>

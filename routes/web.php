@@ -8,17 +8,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::middleware('auth','is_admin')->group(function () {
     Route::get('/porkhub/create', [PorkHubController::class, 'createProductForm']);
     Route::get('/products', [PorkHubController::class, 'showProduct'])->name('products.index');
     Route::post('/porkhub', [PorkHubController::class, 'storeProduct']);
@@ -26,7 +21,16 @@ Route::middleware('auth','is_admin')->group(function () {
     Route::get('/porkhub/edit/{id}', [PorkHubController::class, 'editProduct']);
     Route::post('/porkhub/edit/{id}', [PorkHubController::class, 'updateProduct']);
     Route::post('/porkhub/delete/{id}', [PorkHubController::class, 'deleteProduct']);
-    Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder']);
+});
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder'])->name('user.menu');
+
+    
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__.'/auth.php';
