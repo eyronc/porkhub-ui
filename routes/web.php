@@ -18,7 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth','is_admin')->group(function () {
     Route::get('/porkhub/create', [PorkHubController::class, 'createProductForm']);
     Route::get('/products', [PorkHubController::class, 'showProduct'])->name('products.index');
     Route::post('/porkhub', [PorkHubController::class, 'storeProduct']);
