@@ -50,8 +50,6 @@
         </div>
     </header>
 
-
-
     <!-- Card layout -->
     <section class="pt-24 pb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -120,7 +118,7 @@
                             </div>
 
                             <div class="mt-6 flex items-center gap-3">
-                                <form action="/porkhub/order/{{ $item->id }}" method="POST" class="inline">
+                                <form action="/porkhub/addOrderToCart/{{ $item->id }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" class="inline-flex items-center px-3 py-2 rounded-md text-sm font-semibold bg-green-500 hover:bg-green-600 text-white shadow-sm">
                                         Add Order
@@ -139,8 +137,5 @@
             </div>
         </div>
     </section>
-       
-              
-    </main>
 </body>
 </html>

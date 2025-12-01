@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder'])->name('user.menu');
     Route::get('/porkhub/userhome', [PorkHubController::class, 'userHome'])->name('user.home');
+    Route::post('/porkhub/addOrderToCart/{id}', [PorkHubController::class, 'addOrderToCart'])->name('user.addOrderToCart');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

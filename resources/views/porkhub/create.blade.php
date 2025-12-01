@@ -66,6 +66,7 @@
 
             <!-- Card wrapper -->
             <section class="bg-white dark:bg-gray-800/80 shadow-xl rounded-2xl border border-gray-200/60 dark:border-gray-700/70 overflow-hidden p-6 sm:p-8">
+                </section>
 
     <form method="POST" action="/porkhub" enctype="multipart/form-data" class="space-y-6">
         @csrf

@@ -134,5 +134,10 @@ class PorkHubController extends Controller
         return view('porkhub.userhome');
     }
 
+    public function addOrderToCart(Request $request, $id)
+    {
+        $product = PorkHub::find($id);
+        return view('porkhub.addorder', compact('product'));
+    }
 }
     
