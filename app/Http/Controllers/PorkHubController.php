@@ -129,5 +129,10 @@ class PorkHubController extends Controller
         }
     }
 
+    public function userHome()
+    {
+        return view('porkhub.userhome');
+    }
+
 }
     

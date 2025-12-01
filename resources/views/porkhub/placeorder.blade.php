@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>PLACE ORDER</title>
+    <title>Place Order</title>
+    <link rel = "icon" href = "{{ asset('images/logo-removebg-preview.png') }}" type = "image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased font-sans overflow-x-hidden">
 
     <!-- Header -->
-
-    
     <header class="fixed top-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-lg z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -26,7 +25,9 @@
 
                 <!-- Navigation -->
                 <nav class="flex items-center space-x-8">
-                    
+                    <a href="\porkhub\userhome" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full pb-1 pt-1">
+                        Home
+                    </a>
                     <a href="\porkhub\order" class="text-sm font-medium text-red-600 dark:text-red-500 hover:text-red-700 transition-all duration-300 pb-1 pt-1">
                         Products
                     </a>
@@ -120,10 +121,7 @@
 
                 @if ($product->isEmpty())
                     <div class="col-span-full text-center py-12">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">No products found. Click
-                            <a href="/porkhub/create" class="text-red-600 hover:text-red-700 font-semibold">Create New Product</a>
-                            to add your first item.
-                        </p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">No products found. Please check back later or contact the administrator. </p>
                     </div>
                 @endif
             </div>
