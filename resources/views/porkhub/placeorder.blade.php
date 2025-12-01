@@ -50,6 +50,8 @@
         </div>
     </header>
 
+
+
     <!-- Card layout -->
     <section class="pt-24 pb-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,6 +61,16 @@
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Menu</h1>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">A detailed view of the menu.</p>
+                </div>
+
+                <!-- Cart Button -->
+                <div class="fixed top-50 right-20 z-40">
+                        <a href="/" class="inline-flex items-center gap-1 bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg text-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        <span class="font-semibold">Cart</span>
+                    </a>
                 </div>
             </div>
 
