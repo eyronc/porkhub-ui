@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignID('user_id')->constrained()->onDelete('cascade');
-            $table->foreignID('restaurant_branch_id')->constrained('restaurant_branches')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('restaurant_branch_id')->constrained('restaurant_branches')->onDelete('cascade');
             $table->string('payment_method');
-            $table->decimal('total_amount', 10, 2);
+            $table->decimal('total_amount', 10, 2)->default(0.00);
             $table->string('status')->default('pending');
             $table->timestamps();
         });

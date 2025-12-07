@@ -134,10 +134,180 @@ class PorkHubController extends Controller
         return view('porkhub.userhome');
     }
 
-    public function addOrderToCart(Request $request, $id)
+     public function showCart()
+    {
+        $cart = session()->get('cart', []);
+        return view('cart.showcart', compact('cart'));
+    }
+
+
+    public function addToCartForm(Request $request, $id)
     {
         $product = PorkHub::find($id);
         return view('porkhub.addorder', compact('product'));
     }
+
+    public function addToCart(Request $request, $id)
+{
+    $product = PorkHub::findOrFail($id);
+    $cart = session()->get('cart', []);
+
+    $quantity = $request->input('quantity', 1);
+
+    if (isset($cart[$id])) {
+        $cart[$id]['quantity'] += $quantity;
+        $cart[$id]['subtotal'] = $cart[$id]['quantity'] * $cart[$id]['price'];
+    } else {
+        $cart[$id] = [
+            'name'     => $product->product_name,
+            'price'    => $product->product_price,
+            'quantity' => $quantity,
+            'subtotal' => $product->product_price * $quantity,
+        ];
+    }
+
+    session()->put('cart', $cart);
+    return redirect()->back()->with('success', 'Product added to cart!');
+}
+ 
+
+
+    public function updateCart(Request $request, $id)
+    {
+        $cart = session()->get('cart', []);
+
+        if(isset($cart[$id])) {
+            $cart[$id]['quantity'] = $request->quantity;
+            $cart[$id]['subtotal'] = $cart[$id]['quantity'] * $cart[$id]['price'];
+            session()->put('cart', $cart);
+        }
+
+        return redirect()->back()->with('success', 'Cart updated!');
+    }
+
+    public function removeFromCart($id)
+    {
+        $cart = session()->get('cart', []);
+
+        if(isset($cart[$id])) {
+            unset($cart[$id]);
+            session()->put('cart', $cart);
+        }
+
+        return redirect()->back()->with('success', 'Item removed from cart!');
+    }
+
+    public function clearCart()
+    {
+        session()->forget('cart');
+        return redirect()->back()->with('success', 'Cart cleared!');
+    }
+
+    public function showCheckout()
+{
+    $cart = session()->get('cart', []);
+
+    if (empty($cart)) {
+        return redirect()->route('cart.show')->with('error', 'Your cart is empty.');
+    }
+
+    // Get restaurant branches for selection
+    $branches = \App\Models\RestaurantBranch::all();
+
+    // Get logged-in user's name from Breeze
+    $userName = auth()->user()->name;
+
+    return view('cart.checkout', compact('cart', 'branches', 'userName'));
+}
+
+
+    public function finalizeOrder(Request $request)
+{
+    $cart = session()->get('cart', []);
+
+    if (empty($cart)) {
+        return back()->with('error', 'Your cart is empty.');
+    }
+
+    $validated = $request->validate([
+        'branch_id' => 'required|integer|exists:restaurant_branches,id',
+        'payment_method' => 'required|string|in:cash,gcash,maya',
+        'buyer_name' => 'required|string|max:255',
+    ]);
+
+    \DB::beginTransaction();
+
+    try {
+        // Calculate total amount
+        $totalAmount = array_sum(array_column($cart, 'subtotal'));
+
+        // Create the main order
+        $orderId = \DB::table('orders')->insertGetId([
+            'user_id' => auth()->id(),
+            'restaurant_branch_id' => $validated['branch_id'],
+            'payment_method' => $validated['payment_method'],
+            'total_amount' => $totalAmount,
+            'status' => 'pending',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Insert each item into order_items
+        foreach ($cart as $id => $item) {
+            $dish = PorkHub::find($id); // your dishes table
+
+            if (!$dish) continue;
+
+            if ($dish->stock < $item['quantity']) {
+                \DB::rollBack();
+                return back()->with('error', 'Not enough stock for: ' . $dish->product_name);
+            }
+
+            \DB::table('order_items')->insert([
+                'order_id' => $orderId,
+                'dish_id' => $id, // <-- match your migration
+                'quantity' => $item['quantity'],
+                'price' => $dish->product_price,
+                'subtotal' => $item['subtotal'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Decrement stock
+            $dish->decrement('stock', $item['quantity']);
+        }
+
+        \DB::commit();
+
+        // Clear cart
+        session()->forget('cart');
+
+        return redirect()->route('order.success')->with('success', 'Order placed successfully! Total: ₱' . number_format($totalAmount, 2));
+
+    } catch (\Exception $e) {
+        \DB::rollBack();
+        return back()->with('error', 'Unable to place order: ' . $e->getMessage());
+    }
+}
+
+
+
+public function orderSuccess()
+{
+    // Get the latest order of the logged-in user
+    $order = \App\Models\Order::with(['items.dish', 'restaurantBranch'])
+                ->where('user_id', auth()->id())
+                ->latest()
+                ->first();
+
+    if (!$order) {
+        return redirect()->route('user.menu')->with('error', 'No recent order found.');
+    }
+
+    return view('porkhub.ordersuccess', compact('order'));
+}
+
+
+
 }
     

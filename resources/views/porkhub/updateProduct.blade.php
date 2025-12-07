@@ -3,80 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Update Product</title>
-    <link rel = "icon" href = "{{ asset('images/logo-removebg-preview.png') }}" type = "image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Update PorkHub Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="{{ asset('images/logo-removebg-preview.png') }}" type="image/x-icon">
 </head>
-<body class="bg-dark text-light">
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Update Product</h1>
-        <form method="POST" action="{{ url('/porkhub/edit/' . $product->id) }}" enctype="multipart/form-data" class="bg-secondary p-4 rounded">
-            @csrf
-            <div class="mb-3">
-                <label for="product_name" class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="product_name" name="product_name" value="{{ $product->product_name }}">
-                @error('product_name')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased font-sans overflow-x-hidden">
 
-            <div class="mb-3">
-                <label for="product_price" class="form-label">Product Price</label>
-                <input type="number" class="form-control" id="product_price" name="product_price" value="{{ $product->product_price }}">
-                @error('product_price')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-lg z-50 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ url('/') }}" class="flex items-center gap-3 group">
+                    <img src="{{ asset('images/logo-removebg-preview.png') }}" class="w-8 h-9" alt="Porkhub Logo" />
+                    <span class="text-red-600 dark:text-red-500 text-2xl font-semibold" style="font-family: 'Dancing Script', cursive;">Porkhub</span>
+                </a>
+                <nav class="flex items-center space-x-6">
+                    <a href="{{ url('/') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Home</a>
+                    <a href="/porkhub/list" class="text-sm font-medium text-red-600 dark:text-red-500">Products</a>
+                    @auth
+                        <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Dashboard</a>
+                        <form method="POST" action="{{ route('logout') }}" class="inline-block">
+                            @csrf
+                            <button type="submit" class="bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700">Logout</button>
+                        </form>
+                    @endauth
+                </nav>
             </div>
-
-            <div class="mb-3">
-                <label for="stock" class="form-label">Stock</label>
-                <input type="number" class="form-control" id="stock" name="stock" value="{{ $product->stock }}">
-                @error('stock')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-3">
-            <label for="category" class="form-label">Category</label>
-            <select class="form-control" name="category" id="category">
-                <option value="">Select Category</option>
-                <option value="Food" {{ $product->category == 'Food' ? 'selected' : '' }}>Food</option>
-                <option value="Drinks" {{ $product->category == 'Drinks' ? 'selected' : '' }}>Drinks</option>
-                <option value="Dessert" {{ $product->category == 'Dessert' ? 'selected' : '' }}>Dessert</option>
-            </select>
-            @error('category')
-                <div class="text-danger">{{ $message }}</div>
-            @enderror
         </div>
+    </header>
 
-            <div class="mb-3">
-                <label for="product_description" class="form-label">Description</label>
-                <textarea class="form-control" id="product_description" name="product_description">{{ $product->product_description }}</textarea>
-                @error('product_description')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
+    <!-- Main Content -->
+    <main class="pt-24 pb-16">
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+                    Update PorkHub Product
+                </h1>
+                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                    Edit your product details below.
+                </p>
             </div>
 
-            <div class="mb-3">
-                <label for="image_path" class="form-label">Product Image</label>
-                <input type="file" class="form-control" id="image_path" name="image_path">
-                @if($product->image_path)
-                    <div class="mt-2">
-                        <img src="{{ asset('storage/' . $product->image_path) }}" alt="Product Image" width="120" class="rounded">
+            <!-- Form Card -->
+            <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-200/60 dark:border-gray-700/70">
+                <form method="POST" action="{{ url('/porkhub/edit/' . $product->id) }}" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+
+                    <!-- Product Name -->
+                    <div>
+                        <label for="productName" class="block text-sm font-semibold mb-2">Product Name</label>
+                        <input type="text" id="productName" name="product_name" value="{{ $product->product_name }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        @error('product_name')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
-                @endif
-                @error('image_path')
-                    <div class="text-danger">{{ $message }}</div>
-                @enderror
-            </div>
 
-            <button type="submit" class="btn btn-danger w-100">Update Product</button>
-        </form>
+                    <!-- Price & Stock -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="productPrice" class="block text-sm font-semibold mb-2">Price</label>
+                            <input type="number" step="0.01" id="productPrice" name="product_price" value="{{ $product->product_price }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            @error('product_price')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label for="stock" class="block text-sm font-semibold mb-2">Stock</label>
+                            <input type="number" id="stock" name="stock" value="{{ $product->stock }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            @error('stock')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
 
-        <div class="text-center mt-3">
-            <a href="/porkhub/list" class="text-decoration-none text-warning">← Go to Products List</a>
+                    <!-- Category -->
+                    <div>
+                        <label for="category" class="block text-sm font-semibold mb-2">Category</label>
+                        <select id="category" name="category" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                            <option value="">Select Category</option>
+                            <option value="Food" {{ $product->category == 'Food' ? 'selected' : '' }}>Food</option>
+                            <option value="Drinks" {{ $product->category == 'Drinks' ? 'selected' : '' }}>Drinks</option>
+                            <option value="Dessert" {{ $product->category == 'Dessert' ? 'selected' : '' }}>Dessert</option>
+                        </select>
+                        @error('category')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <label for="description" class="block text-sm font-semibold mb-2">Description</label>
+                        <textarea id="description" name="product_description" rows="4" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">{{ $product->product_description }}</textarea>
+                        @error('product_description')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <!-- Product Image -->
+                    <div>
+                        <label for="image" class="block text-sm font-semibold mb-2">Product Image</label>
+                        <input type="file" id="image" name="image_path" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        @if($product->image_path)
+                            <div class="mt-2">
+                                <img src="{{ asset('storage/' . $product->image_path) }}" alt="Product Image" class="w-32 rounded">
+                            </div>
+                        @endif
+                        @error('image_path')
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition-all duration-300">
+                        Update Product
+                    </button>
+
+                </form>
+
+                <div class="mt-4 text-center">
+                    <a href="/porkhub/list" class="text-red-600 hover:text-red-700 font-semibold">← Back to Products List</a>
+                </div>
+            </section>
         </div>
-    </div>
+    </main>
+
 </body>
 </html>

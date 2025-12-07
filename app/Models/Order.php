@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
@@ -16,6 +17,7 @@ class Order extends Model
         'restaurant_branch_id',
         'total_amount',
         'status',
+        'payment_method',
     ];
 
     /**
@@ -28,7 +30,7 @@ class Order extends Model
     }
 
     // The branch where the order was placed
-    public function branch()
+    public function restaurantBranch()
     {
         return $this->belongsTo(RestaurantBranch::class, 'restaurant_branch_id');
     }

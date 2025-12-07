@@ -29,6 +29,9 @@
                         <a href="\porkhub\order" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full pb-1 pt-1">
                             Products
                         </a>
+                        <a href="{{ route('cart.show') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full pb-1 pt-1">
+                            My Cart
+                        </a>
                         @auth
                             <form method="POST" action="{{ route('logout') }}" class="inline-block">
                                 @csrf
