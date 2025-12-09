@@ -1,52 +1,314 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Porkhub</title>
+    <link rel="icon" href="{{ asset('images/logo-removebg-preview.png') }}" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 40px rgba(220, 38, 38, 0.4);
+        }
+        
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        
+        .pattern-bg {
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
+        }
+        
+        .progress-step {
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active {
+            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased font-sans overflow-x-hidden pattern-bg">
+    
+    <!-- Decorative Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-red-500/10 rounded-full blur-3xl floating-animation"></div>
+        <div class="absolute bottom-20 left-10 w-96 h-96 bg-red-600/10 rounded-full blur-3xl floating-animation" style="animation-delay: 2s;"></div>
+    </div>
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-6xl w-full grid lg:grid-cols-2 gap-8 items-center">
+            
+            <!-- Left Side - Branding -->
+            <div class="hidden lg:flex flex-col justify-center space-y-8 px-8">
+                <div class="space-y-6">
+                    <div class="flex items-center gap-4 group">
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-xl glow-effect transform group-hover:scale-110 transition-all duration-300">
+                            <img src="{{ asset('images/logo-removebg-preview.png') }}" 
+                                 class="w-16 h-20" 
+                                 alt="Porkhub Logo">
+                        </div>
+                        <span class="text-red-600 dark:text-red-500 text-6xl font-bold" 
+                              style="font-family: 'Dancing Script', cursive;">
+                            Porkhub
+                        </span>
+                    </div>
+                    
+                    <h1 class="text-5xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
+                        Join Our <br>
+                        <span class="text-red-600 dark:text-red-500">Premium Community</span>
+                    </h1>
+                    
+                    <p class="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Create your account today and get access to the finest selection of premium pork products delivered right to your doorstep.
+                    </p>
+                    
+                    <!-- Benefits List -->
+                    <div class="space-y-4 pt-4">
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-600/20 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-gray-100">Exclusive Deals</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Access member-only promotions and special offers</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-600/20 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-gray-100">Fast Checkout</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Save your details for quick and easy ordering</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <div class="flex-shrink-0 w-8 h-8 bg-red-600/20 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-900 dark:text-gray-100">Order Tracking</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Monitor your orders from kitchen to doorstep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Register Form -->
+            <div class="w-full max-w-md mx-auto space-y-8">
+                
+                <!-- Mobile Logo -->
+                <div class="lg:hidden text-center">
+                    <a href="{{ url('/') }}" class="inline-flex items-center gap-3 group mb-6">
+                        <img src="{{ asset('images/logo-removebg-preview.png') }}" 
+                             class="w-12 h-14 transform group-hover:scale-110 transition-transform duration-300" 
+                             alt="Porkhub Logo">
+                        <span class="text-red-600 dark:text-red-500 text-4xl font-semibold group-hover:text-red-700 transition-colors duration-300" 
+                              style="font-family: 'Dancing Script', cursive;">
+                            Porkhub
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Register Card -->
+                <div class="glass-effect py-10 px-8 shadow-2xl rounded-3xl glow-effect sm:px-12">
+                    <div class="mb-8 text-center lg:text-left">
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                            Create Account
+                        </h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            Fill in your details to get started
+                        </p>
+                    </div>
+
+                    <form class="space-y-5" method="POST" action="{{ route('register') }}">
+                        @csrf
+                        
+                        <!-- Name -->
+                        <div class="group">
+                            <label for="name" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Full Name
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </div>
+                                <input id="name" 
+                                       name="name" 
+                                       type="text" 
+                                       autocomplete="name" 
+                                       required 
+                                       autofocus
+                                       value="{{ old('name') }}"
+                                       placeholder="John Doe"
+                                       class="input-glow appearance-none block w-full pl-12 pr-4 py-3.5 border-2 border-gray-700 rounded-xl shadow-sm placeholder-gray-500 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 text-sm font-medium">
+                            </div>
+                            @error('name')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                            @enderror
+                        </div>
+
+                        <!-- Email Address -->
+                        <div class="group">
+                            <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Email Address
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
+                                    </svg>
+                                </div>
+                                <input id="email" 
+                                       name="email" 
+                                       type="email" 
+                                       autocomplete="username" 
+                                       required
+                                       value="{{ old('email') }}"
+                                       placeholder="you@example.com"
+                                       class="input-glow appearance-none block w-full pl-12 pr-4 py-3.5 border-2 border-gray-700 rounded-xl shadow-sm placeholder-gray-500 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 text-sm font-medium">
+                            </div>
+                            @error('email')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                            @enderror
+                        </div>
+
+                        <!-- Password -->
+                        <div class="group">
+                            <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Password
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                </div>
+                                <input id="password" 
+                                       name="password" 
+                                       type="password" 
+                                       autocomplete="new-password" 
+                                       required
+                                       placeholder="••••••••"
+                                       class="input-glow appearance-none block w-full pl-12 pr-4 py-3.5 border-2 border-gray-700 rounded-xl shadow-sm placeholder-gray-500 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 text-sm font-medium">
+                            </div>
+                            @error('password')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                            @enderror
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div class="group">
+                            <label for="password_confirmation" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                                Confirm Password
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg class="h-5 w-5 text-gray-400 group-focus-within:text-red-500 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <input id="password_confirmation" 
+                                       name="password_confirmation" 
+                                       type="password" 
+                                       autocomplete="new-password" 
+                                       required
+                                       placeholder="••••••••"
+                                       class="input-glow appearance-none block w-full pl-12 pr-4 py-3.5 border-2 border-gray-700 rounded-xl shadow-sm placeholder-gray-500 bg-gray-900 text-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-300 text-sm font-medium">
+                            </div>
+                            @error('password_confirmation')
+                            <p class="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ $message }}
+                            </p>
+                            @enderror
+                        </div>
+
+                        <!-- Register Button -->
+                        <div class="pt-2">
+                            <button type="submit" 
+                                    class="group relative w-full flex justify-center items-center py-4 px-4 border border-transparent shadow-lg text-base font-bold rounded-xl text-white gradient-bg hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1">
+                                <span class="absolute left-0 inset-y-0 flex items-center pl-4">
+                                    <svg class="h-5 w-5 text-red-300 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                    </svg>
+                                </span>
+                                Create My Account
+                            </button>
+                        </div>
+
+                        <!-- Already have account -->
+                        <div class="text-center pt-4">
+                            <a href="{{ route('login') }}" 
+                               class="text-sm font-semibold text-gray-400 hover:text-red-500 transition-all duration-300 relative group">
+                                Already have an account? 
+                                <span class="text-red-600 dark:text-red-500">Sign in</span>
+                                <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-red-600 group-hover:w-full transition-all duration-300"></span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Footer Text -->
+                <p class="text-center text-xs text-gray-500 dark:text-gray-400">
+                    By creating an account, you agree to our Terms of Service and Privacy Policy
+                </p>
+            </div>
         </div>
-
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</body>
+</html>

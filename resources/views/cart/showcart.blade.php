@@ -66,10 +66,20 @@
                     </thead>
 
                     <tbody>
-                        @php $total = 0; @endphp
+                        @php 
+                            $total = 0;
+                            // Get all product IDs from cart
+                            $productIds = array_keys($cart);
+                            // Fetch current stock from database
+                            $products = \App\Models\PorkHub::whereIn('id', $productIds)->get()->keyBy('id');
+                        @endphp
 
                         @foreach($cart as $id => $item)
-                        @php $total += $item['subtotal']; @endphp
+                        @php 
+                            $total += $item['subtotal'];
+                            // Get current stock from database
+                            $currentStock = $products->has($id) ? $products[$id]->stock : 0;
+                        @endphp
 
                         <tr class="border-b dark:border-gray-700">
                             <td class="px-6 py-4 font-medium text-lg">
@@ -87,6 +97,7 @@
                                         type="number" 
                                         name="quantity" 
                                         min="1"
+                                        max="{{ $currentStock }}"
                                         value="{{ $item['quantity'] }}"
                                         class="w-20 px-3 py-2 border rounded-lg dark:bg-gray-700 text-center"
                                     >
@@ -94,6 +105,7 @@
                                         Update
                                     </button>
                                 </form>
+                                <p class="text-xs text-gray-500 mt-1">Available: {{ $currentStock }}</p>
                             </td>
 
                             <td class="px-6 py-4">
@@ -113,11 +125,11 @@
                 </table>
 
                 <form action="{{ route('cart.clear') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear your cart?');">
-    @csrf
-    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-        Clear Cart
-    </button>
-    </form>
+                    @csrf
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 mt-4">
+                        Clear Cart
+                    </button>
+                </form>
 
 
                 <div class="flex justify-between items-center mt-8">

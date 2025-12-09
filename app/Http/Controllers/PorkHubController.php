@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PorkHub;
+use App\Models\User;
+use App\Models\Order;
+use App\Models\RestaurantBranch;
+use Illuminate\Support\Facades\DB;
 
 class PorkHubController extends Controller
 {
-    
+    public function adminDashboard()
+    {
+        $users = User::all();
+        return view('dashboard', compact('users'));
+    }
     public function createProductForm()
     {
         return view('porkhub.create');
@@ -40,7 +48,6 @@ class PorkHubController extends Controller
         return view('porkhub.created', compact('product'))->with('success', 'Product created successfully.');
     }
 
-    
     public function showProduct()
     {
         $product = PorkHub::all();
@@ -134,7 +141,7 @@ class PorkHubController extends Controller
         return view('porkhub.userhome');
     }
 
-     public function showCart()
+    public function showCart()
     {
         $cart = session()->get('cart', []);
         return view('cart.showcart', compact('cart'));
@@ -148,30 +155,27 @@ class PorkHubController extends Controller
     }
 
     public function addToCart(Request $request, $id)
-{
-    $product = PorkHub::findOrFail($id);
-    $cart = session()->get('cart', []);
+    {
+        $product = PorkHub::findOrFail($id);
+        $cart = session()->get('cart', []);
 
-    $quantity = $request->input('quantity', 1);
+        $quantity = $request->input('quantity', 1);
 
-    if (isset($cart[$id])) {
-        $cart[$id]['quantity'] += $quantity;
-        $cart[$id]['subtotal'] = $cart[$id]['quantity'] * $cart[$id]['price'];
-    } else {
-        $cart[$id] = [
-            'name'     => $product->product_name,
-            'price'    => $product->product_price,
-            'quantity' => $quantity,
-            'subtotal' => $product->product_price * $quantity,
-        ];
+        if (isset($cart[$id])) {
+            $cart[$id]['quantity'] += $quantity;
+            $cart[$id]['subtotal'] = $cart[$id]['quantity'] * $cart[$id]['price'];
+        } else {
+            $cart[$id] = [
+                'name'     => $product->product_name,
+                'price'    => $product->product_price,
+                'quantity' => $quantity,
+                'subtotal' => $product->product_price * $quantity,
+            ];
+        }
+
+        session()->put('cart', $cart);
+        return redirect()->back()->with('success', 'Product added to cart!');
     }
-
-    session()->put('cart', $cart);
-    return redirect()->back()->with('success', 'Product added to cart!');
-}
- 
-
-
     public function updateCart(Request $request, $id)
     {
         $cart = session()->get('cart', []);
@@ -204,110 +208,139 @@ class PorkHubController extends Controller
     }
 
     public function showCheckout()
-{
-    $cart = session()->get('cart', []);
+    {
+        $cart = session()->get('cart', []);
 
-    if (empty($cart)) {
-        return redirect()->route('cart.show')->with('error', 'Your cart is empty.');
+        if (empty($cart)) {
+            return redirect()->route('cart.show')->with('error', 'Your cart is empty.');
+        }
+
+        $branches = \App\Models\RestaurantBranch::all();
+
+        $userName = auth()->user()->name;
+
+        return view('cart.checkout', compact('cart', 'branches', 'userName'));
     }
-
-    // Get restaurant branches for selection
-    $branches = \App\Models\RestaurantBranch::all();
-
-    // Get logged-in user's name from Breeze
-    $userName = auth()->user()->name;
-
-    return view('cart.checkout', compact('cart', 'branches', 'userName'));
-}
-
-
     public function finalizeOrder(Request $request)
-{
-    $cart = session()->get('cart', []);
+    {
+        $cart = session()->get('cart', []);
 
-    if (empty($cart)) {
-        return back()->with('error', 'Your cart is empty.');
-    }
+        if (empty($cart)) {
+            return back()->with('error', 'Your cart is empty.');
+        }
 
-    $validated = $request->validate([
-        'branch_id' => 'required|integer|exists:restaurant_branches,id',
-        'payment_method' => 'required|string|in:cash,gcash,maya',
-        'buyer_name' => 'required|string|max:255',
-    ]);
-
-    \DB::beginTransaction();
-
-    try {
-        // Calculate total amount
-        $totalAmount = array_sum(array_column($cart, 'subtotal'));
-
-        // Create the main order
-        $orderId = \DB::table('orders')->insertGetId([
-            'user_id' => auth()->id(),
-            'restaurant_branch_id' => $validated['branch_id'],
-            'payment_method' => $validated['payment_method'],
-            'total_amount' => $totalAmount,
-            'status' => 'pending',
-            'created_at' => now(),
-            'updated_at' => now(),
+        $validated = $request->validate([
+            'branch_id' => 'required|integer|exists:restaurant_branches,id',
+            'payment_method' => 'required|string|in:cash,gcash,maya',
+            'buyer_name' => 'required|string|max:255',
         ]);
 
-        // Insert each item into order_items
-        foreach ($cart as $id => $item) {
-            $dish = PorkHub::find($id); // your dishes table
+        \DB::beginTransaction();
 
-            if (!$dish) continue;
+        try {
+            // Calculate total amount
+            $totalAmount = array_sum(array_column($cart, 'subtotal'));
 
-            if ($dish->stock < $item['quantity']) {
-                \DB::rollBack();
-                return back()->with('error', 'Not enough stock for: ' . $dish->product_name);
-            }
-
-            \DB::table('order_items')->insert([
-                'order_id' => $orderId,
-                'dish_id' => $id, // <-- match your migration
-                'quantity' => $item['quantity'],
-                'price' => $dish->product_price,
-                'subtotal' => $item['subtotal'],
+            // Create the main order
+            $orderId = \DB::table('orders')->insertGetId([
+                'user_id' => auth()->id(),
+                'restaurant_branch_id' => $validated['branch_id'],
+                'payment_method' => $validated['payment_method'],
+                'total_amount' => $totalAmount,
+                'status' => 'pending',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            // Decrement stock
-            $dish->decrement('stock', $item['quantity']);
+            // Insert each item into order_items
+            foreach ($cart as $id => $item) {
+                $dish = PorkHub::find($id); // your dishes table
+
+                if (!$dish) continue;
+
+                if ($dish->stock < $item['quantity']) {
+                    \DB::rollBack();
+                    return back()->with('error', 'Not enough stock for: ' . $dish->product_name);
+                }
+
+                \DB::table('order_items')->insert([
+                    'order_id' => $orderId,
+                    'dish_id' => $id, // <-- match your migration
+                    'quantity' => $item['quantity'],
+                    'price' => $dish->product_price,
+                    'subtotal' => $item['subtotal'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Decrement stock
+                $dish->decrement('stock', $item['quantity']);
+            }
+
+            \DB::commit();
+
+            // Clear cart
+            session()->forget('cart');
+
+            return redirect()->route('order.success')->with('success', 'Order placed successfully! Total: ₱' . number_format($totalAmount, 2));
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->with('error', 'Unable to place order: ' . $e->getMessage());
+        }
+    }
+    public function orderSuccess()
+    {
+        $order = \App\Models\Order::with(['items.dish', 'restaurantBranch'])
+                    ->where('user_id', auth()->id())
+                    ->latest()
+                    ->first();
+
+        if (!$order) {
+            return redirect()->route('user.menu')->with('error', 'No recent order found.');
         }
 
-        \DB::commit();
-
-        // Clear cart
-        session()->forget('cart');
-
-        return redirect()->route('order.success')->with('success', 'Order placed successfully! Total: ₱' . number_format($totalAmount, 2));
-
-    } catch (\Exception $e) {
-        \DB::rollBack();
-        return back()->with('error', 'Unable to place order: ' . $e->getMessage());
-    }
-}
-
-
-
-public function orderSuccess()
-{
-    // Get the latest order of the logged-in user
-    $order = \App\Models\Order::with(['items.dish', 'restaurantBranch'])
-                ->where('user_id', auth()->id())
-                ->latest()
-                ->first();
-
-    if (!$order) {
-        return redirect()->route('user.menu')->with('error', 'No recent order found.');
+        return view('porkhub.ordersuccess', compact('order'));
     }
 
-    return view('porkhub.ordersuccess', compact('order'));
-}
+// Show edit user form
+    public function editUser($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+        return view('porkhub.updateUser', compact('user'));
+    }
+    public function updateUser(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+        ];
+
+        if ($user->role === 'admin') {
+            $rules['is_admin'] = 'required|boolean';
+        }
+
+        $validated = $request->validate($rules);
+
+        $user->update($validated);
+
+        return redirect('/dashboard')->with('success', 'User updated successfully.');
+    }
 
 
+    public function deleteUser($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
 
-}
-    
+        if ($user->id === auth()->id()) {
+            return redirect('/dashboard')->with('error', 'You cannot delete yourself.');
+        }
+
+        $user->delete();
+
+        return redirect('/dashboard')->with('success', 'User deleted successfully.');
+    }
+
+} 

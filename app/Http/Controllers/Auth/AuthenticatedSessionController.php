@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
+        if ($user->email === 'admin@porkhub.com' || $user->role === 'admin') {
             return redirect('/dashboard');
         }
 
