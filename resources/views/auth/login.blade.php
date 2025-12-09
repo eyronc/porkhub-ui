@@ -104,20 +104,6 @@
 
             <!-- Right Side - Login Form -->
             <div class="w-full max-w-md mx-auto space-y-8">
-                
-                <!-- Mobile Logo -->
-                <div class="lg:hidden text-center">
-                    <a href="{{ url('/') }}" class="inline-flex items-center gap-3 group mb-6">
-                        <img src="{{ asset('images/logo-removebg-preview.png') }}" 
-                             class="w-12 h-14 transform group-hover:scale-110 transition-transform duration-300" 
-                             alt="Porkhub Logo">
-                        <span class="text-red-600 dark:text-red-500 text-4xl font-semibold group-hover:text-red-700 transition-colors duration-300" 
-                              style="font-family: 'Dancing Script', cursive;">
-                            Porkhub
-                        </span>
-                    </a>
-                </div>
-
                 <!-- Session Status Message -->
                 @if (session('status'))
                 <div class="rounded-xl bg-emerald-50 dark:bg-emerald-900/20 p-4 border-l-4 border-emerald-500 shadow-lg transform hover:scale-105 transition-transform duration-300">

@@ -80,10 +80,97 @@
 
         <!-- Tab Contents -->
         <section id="overview" class="tab-content">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Users Card -->
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-2xl p-6 shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium">Total Users</p>
+                    <p class="text-3xl font-bold mt-2">{{ $users->count() }}</p>
+                </div>
+                <div class="text-5xl opacity-20">👥</div>
+                </div>
+            </div>
+
+            <!-- Total Orders Card -->
+            <div class="bg-gradient-to-br from-green-500 to-green-600 dark:from-green-600 dark:to-green-700 rounded-2xl p-6 shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-medium">Total Orders</p>
+                    <p class="text-3xl font-bold mt-2">{{ $orders->count() }}</p>
+                </div>
+                <div class="text-5xl opacity-20">📦</div>
+                </div>
+            </div>
+
+            <!-- Total Reviews Card -->
+            <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 dark:from-yellow-600 dark:to-yellow-700 rounded-2xl p-6 shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-yellow-100 text-sm font-medium">Total Reviews</p>
+                    <p class="text-3xl font-bold mt-2">{{ $reviews->count() }}</p>
+                </div>
+                <div class="text-5xl opacity-20">⭐</div>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="bg-gradient-to-br from-red-500 to-red-600 dark:from-red-600 dark:to-red-700 rounded-2xl p-6 shadow-lg text-white">
+                <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-100 text-sm font-medium">Total Revenue</p>
+                    <p class="text-3xl font-bold mt-2">₱{{ number_format($orders->sum('total_amount'), 2) }}</p>
+                </div>
+                <div class="text-5xl opacity-20">💰</div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Recent Activity Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Recent Orders -->
             <div class="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 shadow-xl">
-                <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Overview</h2>
-                <p class="text-gray-600 dark:text-gray-300">Welcome to the PorkHub admin dashboard overview! Here you can see quick stats and summaries.</p>
-                <!-- You can add summary cards or stats here later -->
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Recent Orders</h3>
+                <div class="space-y-3">
+                @forelse ($orders->take(5) as $order)
+                    <div class="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <div>
+                        <p class="font-semibold text-gray-900 dark:text-gray-100">Order #{{ $order->id }}</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ $order->user->name }}</p>
+                    </div>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                        @if($order->status == 'pending') bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200
+                        @elseif($order->status == 'shipping') bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200
+                        @elseif($order->status == 'delivered') bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200
+                        @else bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200
+                        @endif">
+                        {{ ucfirst($order->status) }}
+                    </span>
+                    </div>
+                @empty
+                    <p class="text-gray-600 dark:text-gray-400 text-center py-4">No recent orders</p>
+                @endforelse
+                </div>
+            </div>
+
+            <!-- Recent Reviews -->
+            <div class="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 shadow-xl">
+                <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Recent Reviews</h3>
+                <div class="space-y-3">
+                @forelse ($reviews->take(5) as $review)
+                    <div class="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="font-semibold text-gray-900 dark:text-gray-100">{{ $review->user->name }}</p>
+                        <span class="text-yellow-500">⭐ {{ $review->rating }}/5</span>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">{{ $review->comment }}</p>
+                    </div>
+                @empty
+                    <p class="text-gray-600 dark:text-gray-400 text-center py-4">No recent reviews</p>
+                @endforelse
+                </div>
+            </div>
             </div>
         </section>
 
@@ -137,15 +224,134 @@
 
         <section id="reviews" class="tab-content hidden">
             <div class="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 shadow-xl">
-                <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Reviews</h2>
-                <p class="text-gray-600 dark:text-gray-300">Reviews section coming soon.</p>
+            <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Reviews</h2>
+
+            @if($reviews->isEmpty())
+                <p class="text-gray-600 dark:text-gray-300">No reviews yet.</p>
+            @else
+                <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    <thead class="bg-gray-50 dark:bg-gray-900/50">
+                    <tr>
+                        <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">User</th>
+                        <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Rating</th>
+                        <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Comment</th>
+                        <th class="px-4 py-3 text-right font-semibold text-xs text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-800">
+                    @foreach($reviews as $review)
+                        <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-700/60 transition-colors">
+                        <td class="px-4 py-3 text-gray-900 dark:text-gray-100 font-semibold">{{ $review->user->name }}</td>
+                        <td class="px-4 py-3 text-gray-700 dark:text-gray-200">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200">
+                            ⭐ {{ $review->rating }}/5
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 dark:text-gray-300 max-w-sm truncate">{{ $review->comment }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <form action="{{ route('admin.reviews.delete', $review->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-rose-500 hover:bg-rose-600 text-white shadow-sm hover:shadow-md transition">
+                                Delete
+                            </button>
+                            </form>
+                        </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                </div>
+            @endif
             </div>
         </section>
+
 
         <section id="purchase-history" class="tab-content hidden">
             <div class="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 shadow-xl">
                 <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Purchase History</h2>
-                <p class="text-gray-600 dark:text-gray-300">Purchase History section coming soon.</p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                        <thead class="bg-gray-50 dark:bg-gray-900/50">
+                            <tr>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Branch</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Items</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Placed At</th>
+                                <th class="px-4 py-3 text-right font-semibold text-xs text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800 bg-white dark:bg-gray-800">
+                            @forelse ($orders as $order)
+                                <tr class="hover:bg-gray-50/70 dark:hover:bg-gray-700/60 transition-colors">
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-200">{{ $order->id }}</td>
+                                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 font-semibold">{{ $order->user->name }}</td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $order->restaurantBranch->name ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
+                                        <ul class="list-disc pl-4">
+                                            @foreach ($order->items as $item)
+                                                <li>{{ $item->dish->product_name }} (x{{ $item->quantity }})</li>
+                                            @endforeach
+                                        </ul>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-200">₱{{ number_format($order->total_amount, 2) }}</td>
+                                    <td class="px-4 py-3">
+                                        @php
+                                            $status = $order->status;
+                                            $disabled = in_array($status, ['delivered', 'cancelled']);
+                                        @endphp
+                                        <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST">
+                                            @csrf
+                                            <select name="status" 
+                                                {{ $disabled ? 'disabled' : '' }} 
+                                                class="border-gray-300 rounded-md text-sm p-1 bg-white dark:bg-gray-700 dark:text-gray-100">
+                                                @if($status == 'pending')
+                                                    <option value="pending" selected>Pending</option>
+                                                    <option value="shipping">Out-for-Delivery</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                @elseif($status == 'shipping')
+                                                    <option value="shipping" selected>Out-for-Delivery</option>
+                                                    <option value="delivered">Delivered</option>
+                                                    <option value="cancelled">Cancelled</option>
+                                                @elseif($status == 'delivered')
+                                                    <option value="delivered" selected>Delivered</option>
+                                                @elseif($status == 'cancelled')
+                                                    <option value="cancelled" selected>Cancelled</option>
+                                                @endif
+
+                                            </select>
+                                            @if(!$disabled)
+                                                <button type="submit" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition">
+                                                    Update
+                                                </button>
+                                            @endif
+                                        </form>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $order->created_at->format('M d, Y H:i A') }}</td>
+                                    <td class="px-4 py-3 text-right">
+                                        <form action="{{ route('admin.orders.delete', $order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2 py-1 bg-rose-500 text-white text-xs rounded hover:bg-rose-600 transition">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+                                        No orders placed yet.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </section>
 

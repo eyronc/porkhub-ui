@@ -10,14 +10,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::middleware('auth')->post('/close-review-popup', function () {
+    session(['review_popup_shown' => false]);
+    return response()->json(['success' => true]);
+});
 
-Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
-    Route::get('/dashboard', [PorkHubController::class, 'adminDashboard'])->name('dashboard');
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/dashboard', [PorkHubController::class, 'adminDashboard'])->name('admin.dashboard');
     Route::get('/users/edit/{id}', [PorkHubController::class, 'editUser'])->name('users.edit');
     Route::post('/users/edit/{id}', [PorkHubController::class, 'updateUser'])->name('users.update');
     Route::post('/users/delete/{id}', [PorkHubController::class, 'deleteUser'])->name('users.delete');
-
+    Route::post('/admin/orders/{order}/update-status', [PorkHubController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
+    Route::delete('/admin/orders/{order}', [PorkHubController::class, 'deleteOrder'])->name('admin.orders.delete');
+    Route::post('/reviews/store', [PorkHubController::class, 'storeReview'])->name('admin.reviews.store');
+    Route::get('/dashboard', [PorkHubController::class, 'adminDashboard'])->name('dashboard');
+    Route::delete('/admin/reviews/{id}', [PorkHubController::class, 'deleteReview'])->name('admin.reviews.delete');
+    Route::get('/admin/reviews', [PorkHubController::class, 'adminDashboard'])->name('admin.reviews');
     Route::get('/porkhub/create', [PorkHubController::class, 'createProductForm']);
     Route::get('/products', [PorkHubController::class, 'showProduct'])->name('products.index');
     Route::post('/porkhub', [PorkHubController::class, 'storeProduct']);
@@ -33,13 +41,14 @@ Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
     Route::post('/branches/delete/{id}', [RestaurantBranchController::class, 'deleteBranch'])->name('branches.delete');
 });
 
-
+// User routes
 Route::middleware('auth')->group(function () {
     Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder'])->name('user.menu');
     Route::get('/porkhub/userhome', [PorkHubController::class, 'userHome'])->name('user.home');
     Route::get('/cart', [PorkHubController::class, 'showCart'])->name('cart.show');
-    
-    Route::get('/porkhub/addOrderToCart/{id}', [PorkHubController::class, 'addToCartForm'])->name('user.addtocartform');
+    Route::get('/review', [PorkHubController::class, 'showUserReviewForm'])->name('user.reviews');
+    Route::post('/review/submit', [PorkHubController::class, 'storeReview'])->name('user.submitReview');
+    Route::get('/porkhub/addOrderToCart/{id}', [PorkHubController::class, 'addToCartForm'])->name('cart.addForm');
     Route::post('/porkhub/addOrderToCart/{id}', [PorkHubController::class, 'addToCart'])->name('cart.add');
     Route::post('/cart/update/{id}', [PorkHubController::class, 'updateCart'])->name('cart.update');
     Route::post('/cart/remove/{id}', [PorkHubController::class, 'removeFromCart'])->name('cart.remove');
@@ -48,7 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [PorkHubController::class, 'showCheckout'])->name('cart.checkout');
     Route::post('/porkhub/finalize-order', [PorkHubController::class, 'finalizeOrder'])->name('order.finalize');
     Route::get('/porkhub/order-success', [PorkHubController::class, 'orderSuccess'])->name('order.success');
-    
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

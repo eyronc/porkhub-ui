@@ -8,14 +8,25 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\RestaurantBranch;
 use Illuminate\Support\Facades\DB;
+use App\Models\Review;
 
 class PorkHubController extends Controller
 {
     public function adminDashboard()
     {
         $users = User::all();
-        return view('dashboard', compact('users'));
+
+        $orders = Order::with(['user', 'items.dish', 'restaurantBranch'])
+                    ->orderBy('created_at', 'desc')  // Changed to desc to show newest first
+                    ->get();
+
+        $reviews = Review::with('user')
+                    ->orderBy('created_at', 'desc')
+                    ->get();
+
+        return view('dashboard', compact('users', 'orders', 'reviews'));
     }
+
     public function createProductForm()
     {
         return view('porkhub.create');
@@ -138,6 +149,12 @@ class PorkHubController extends Controller
 
     public function userHome()
     {
+        $order = Order::where('user_id', auth()->id())->latest()->first(); // Get the latest order for the user
+
+        if ($order && $order->status == 'delivered' && !session()->has('review_popup_shown')) {
+            session(['review_popup_shown' => true]);
+        }
+
         return view('porkhub.userhome');
     }
 
@@ -343,4 +360,54 @@ class PorkHubController extends Controller
         return redirect('/dashboard')->with('success', 'User deleted successfully.');
     }
 
+    public function updateOrderStatus(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,shipping,delivered,cancelled',
+        ]);
+
+        $order->update([
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()->back()->with('success', 'Order status updated successfully.');
+    }
+
+    public function deleteOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
+
+        return redirect()->back()->with('success', 'Order deleted successfully.');
+    }
+
+    public function storeReview(Request $request)
+    {
+        $validated = $request->validate([
+            'rating' => 'required|integer|between:1,5',
+            'comment' => 'required|string|max:500',
+        ]);
+
+        $review = Review::create([
+            'user_id' => auth()->id(),
+            'rating' => $validated['rating'],
+            'comment' => $validated['comment'],
+        ]);
+
+        // Redirect to user home page with success message
+        return redirect()->route('user.home')->with('success', 'Thank you for your review!');
+    }
+
+    public function showUserReviewForm()
+    {
+        return view('porkhub.review');
+    }
+
+    public function deleteReview($id)
+    {
+        $review = Review::findOrFail($id);
+        $review->delete();
+
+        return redirect()->back()->with('success', 'Review deleted successfully.');
+    }
 } 
