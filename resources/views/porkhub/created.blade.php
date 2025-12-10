@@ -47,7 +47,7 @@
             <section class="bg-white dark:bg-gray-800/80 shadow-xl rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 sm:p-8 space-y-4">
                 <p class="font-semibold text-gray-900 dark:text-gray-100">Name: {{ $product->product_name }}</p>
                 <p class="text-gray-700 dark:text-gray-300">Description: {{ $product->product_description }}</p>
-                <p class="text-gray-700 dark:text-gray-300">Price: ${{ $product->product_price }}</p>
+                <p class="text-gray-700 dark:text-gray-300">Price: ₱{{ $product->product_price }}</p>
                 <p class="text-gray-700 dark:text-gray-300">Stock: {{ $product->stock }}</p>
                 <p class="text-gray-700 dark:text-gray-300">Category: {{ $product->category ?? 'N/A' }}</p>
                 @if($product->image_path)

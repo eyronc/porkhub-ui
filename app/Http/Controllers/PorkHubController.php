@@ -394,7 +394,6 @@ class PorkHubController extends Controller
             'comment' => $validated['comment'],
         ]);
 
-        // Redirect to user home page with success message
         return redirect()->route('user.home')->with('success', 'Thank you for your review!');
     }
 

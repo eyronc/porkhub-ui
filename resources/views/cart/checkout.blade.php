@@ -100,10 +100,10 @@
                     <!-- Payment Method -->
                     <h2 class="text-xl font-semibold mb-4 text-red-600">Payment Method</h2>
                     <select name="payment_method" required class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 mb-6">
-                        <option value="cash">Cash on Delivery</option>
-                        <option value="gcash">GCash</option>
-                        <option value="maya">PayMaya</option>
-                        <option value="maya">UnionBank</option>
+                        <option value="Cash-on-Delivery">Cash on Delivery</option>
+                        <option value="Gcash">GCash</option>
+                        <option value="PayMaya">PayMaya</option>
+                        <option value="UnionBank">UnionBank</option>
                     </select>
 
                     <input type="hidden" name="buyer_name" value="{{ $userName }}">

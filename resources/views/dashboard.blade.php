@@ -25,7 +25,7 @@
                     <a href="{{ url('/') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300">
                         Home
                     </a>
-                    <a href="/branches" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300">
+                    <a href="{{ route('branches.list') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300">
                         Branches
                     </a>
                     <a href="/porkhub/list" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300">
@@ -69,7 +69,7 @@
             </a>
             <a href="#user-management" class="px-5 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100 font-semibold cursor-pointer select-none">
                 User Management
-            </a>
+            </a>    
             <a href="#reviews" class="px-5 py-2 rounded-full text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-900 hover:text-gray-900 dark:hover:text-gray-100 font-semibold cursor-pointer select-none">
                 Reviews
             </a>
@@ -197,9 +197,6 @@
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $user->created_at->format('M d, Y H:i A') }}</td>
                                     <td class="px-4 py-3 text-right">
                                         <div class="inline-flex gap-2">
-                                            <a href="{{ url('/users/edit/' . $user->id) }}" class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-blue-500 hover:bg-blue-600 text-white shadow-sm hover:shadow-md transition">
-                                                Edit
-                                            </a>
                                             <form action="{{ url('/users/delete/' . $user->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                                 @csrf
                                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-semibold bg-rose-500 hover:bg-rose-600 text-white shadow-sm hover:shadow-md transition">
@@ -267,7 +264,6 @@
             </div>
         </section>
 
-
         <section id="purchase-history" class="tab-content hidden">
             <div class="bg-white dark:bg-gray-800/80 rounded-2xl border border-gray-200/60 dark:border-gray-700/70 p-6 shadow-xl">
                 <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Purchase History</h2>
@@ -304,11 +300,11 @@
                                             $status = $order->status;
                                             $disabled = in_array($status, ['delivered', 'cancelled']);
                                         @endphp
-                                        <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST">
+                                        <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST" class="flex flex-col gap-2">
                                             @csrf
                                             <select name="status" 
                                                 {{ $disabled ? 'disabled' : '' }} 
-                                                class="border-gray-300 rounded-md text-sm p-1 bg-white dark:bg-gray-700 dark:text-gray-100">
+                                                class="border border-gray-300 dark:border-gray-600 rounded-md text-sm p-2 bg-white dark:bg-gray-700 dark:text-gray-100 w-full">
                                                 @if($status == 'pending')
                                                     <option value="pending" selected>Pending</option>
                                                     <option value="shipping">Out-for-Delivery</option>
@@ -322,10 +318,9 @@
                                                 @elseif($status == 'cancelled')
                                                     <option value="cancelled" selected>Cancelled</option>
                                                 @endif
-
                                             </select>
                                             @if(!$disabled)
-                                                <button type="submit" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition">
+                                                <button type="submit" class="px-3 py-1 bg-blue-500 text-white text-xs font-medium rounded hover:bg-blue-600 transition">
                                                     Update
                                                 </button>
                                             @endif

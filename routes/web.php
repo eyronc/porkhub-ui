@@ -63,4 +63,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware('auth')->post('/close-review-popup', function () {
+    session(['review_popup_shown' => false]);
+    return response()->json(['success' => true]);
+})->name('review.popup.close');
+
 require __DIR__.'/auth.php';
