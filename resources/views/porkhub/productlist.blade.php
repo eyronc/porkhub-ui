@@ -11,7 +11,7 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased font-sans overflow-x-hidden">
 
-    <!-- Header (same as welcome.blade.php) -->
+    <!-- Header -->
     <header class="fixed top-0 w-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-lg z-50 border-b border-gray-200 dark:border-gray-700 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -96,7 +96,6 @@
 
             <!-- Card wrapper -->
             <section class="bg-white dark:bg-gray-800/80 shadow-xl rounded-2xl border border-gray-200/60 dark:border-gray-700/70 overflow-hidden">
-                <!-- Card header row (summary + search placeholder) -->
                 <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div class="space-y-1">
                         <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -230,7 +229,6 @@
 
                             function parsePrice(text) {
                                 if (!text) return NaN;
-                                // strip non-numeric except dot and minus
                                 const num = text.replace(/[^\d.-]/g, '');
                                 return parseFloat(num);
                             }
@@ -253,7 +251,6 @@
 
                                 rows.forEach(row => {
                                     const cells = row.querySelectorAll('td');
-                                    // columns: 0 id, 1 name, 2 desc, 3 category, 4 price, 5 stock ...
                                     const fullText = row.textContent.toLowerCase();
                                     const categoryText = (cells[3] ? cells[3].textContent.toLowerCase() : '');
                                     const priceText = (cells[4] ? cells[4].textContent : '');
@@ -267,7 +264,6 @@
                                     if (!isNaN(min) && !isNaN(priceVal)) matchesPrice = priceVal >= min;
                                     if (!isNaN(max) && !isNaN(priceVal)) matchesPrice = matchesPrice && priceVal <= max;
                                     if ((!isNaN(min) && isNaN(priceVal)) || (!isNaN(max) && isNaN(priceVal))) {
-                                        // if row has no price and a bound is set, exclude it
                                         matchesPrice = false;
                                     }
 
@@ -282,7 +278,6 @@
                                     if (visible) anyVisible = true;
                                 });
 
-                                // remove any existing no-result rows
                                 const existing = tbody.querySelectorAll('tr.no-search-results');
                                 existing.forEach(e => e.remove());
 
@@ -291,7 +286,6 @@
                                 }
                             }
 
-                            // wire events
                             if (searchInput) searchInput.addEventListener('input', filterAll);
                             if (categorySelect) categorySelect.addEventListener('change', filterAll);
                             if (stockSelect) stockSelect.addEventListener('change', filterAll);
@@ -307,7 +301,6 @@
                                 filterAll();
                             });
 
-                            // initial run (in case there are query params or presets)
                             filterAll();
                         });
                     </script>

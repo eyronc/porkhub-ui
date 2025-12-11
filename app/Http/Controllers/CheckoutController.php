@@ -20,7 +20,7 @@ class CheckoutController extends Controller
             return redirect()->route('cart.show')->with('error', 'Your cart is empty.');
         }
 
-        $branches = \App\Models\RestaurantBranch::all();
+        $branches = RestaurantBranch::all();
 
         $userName = auth()->user()->name;
 
@@ -45,10 +45,8 @@ class CheckoutController extends Controller
 
         try {
 
-            // Calculate total amount
             $totalAmount = array_sum(array_column($cart, 'subtotal'));
 
-            // Create the main order
             $orderId = \DB::table('orders')->insertGetId([
                 'user_id' => auth()->id(),
                 'restaurant_branch_id' => $validated['branch_id'],
@@ -60,9 +58,8 @@ class CheckoutController extends Controller
                 'updated_at' => now(),
             ]);
 
-            // Insert each item into order_items
             foreach ($cart as $id => $item) {
-                $dish = PorkHub::find($id); // your dishes table
+                $dish = PorkHub::find($id); 
 
                 if (!$dish) continue;
 
@@ -73,7 +70,7 @@ class CheckoutController extends Controller
 
                 \DB::table('order_items')->insert([
                     'order_id' => $orderId,
-                    'dish_id' => $id, // <-- match your migration
+                    'dish_id' => $id,
                     'quantity' => $item['quantity'],
                     'price' => $dish->product_price,
                     'subtotal' => $item['subtotal'],
@@ -81,13 +78,11 @@ class CheckoutController extends Controller
                     'updated_at' => now(),
                 ]);
 
-                // Decrement stock
                 $dish->decrement('stock', $item['quantity']);
             }
 
             \DB::commit();
 
-            // Clear cart
             session()->forget('cart');
             session()->forget('review_popup_dismissed');
 
@@ -100,7 +95,7 @@ class CheckoutController extends Controller
     }
     public function orderSuccess()
     {
-        $order = \App\Models\Order::with(['items.dish', 'restaurantBranch'])
+        $order = Order::with(['items.dish', 'restaurantBranch'])
                     ->where('user_id', auth()->id())
                     ->latest()
                     ->first();

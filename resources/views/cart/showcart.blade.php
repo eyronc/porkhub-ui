@@ -68,16 +68,13 @@
                     <tbody>
                         @php 
                             $total = 0;
-                            // Get all product IDs from cart
                             $productIds = array_keys($cart);
-                            // Fetch current stock from database
                             $products = \App\Models\PorkHub::whereIn('id', $productIds)->get()->keyBy('id');
                         @endphp
 
                         @foreach($cart as $id => $item)
                         @php 
                             $total += $item['subtotal'];
-                            // Get current stock from database
                             $currentStock = $products->has($id) ? $products[$id]->stock : 0;
                         @endphp
 

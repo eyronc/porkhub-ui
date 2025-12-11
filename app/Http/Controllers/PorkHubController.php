@@ -17,7 +17,7 @@ class PorkHubController extends Controller
         $users = User::all();
 
         $orders = Order::with(['user', 'items.dish', 'restaurantBranch'])
-                    ->orderBy('created_at', 'desc')  // Changed to desc to show newest first
+                    ->orderBy('created_at', 'desc')
                     ->get();
 
         $reviews = Review::with('user')
@@ -106,10 +106,8 @@ class PorkHubController extends Controller
                                 ->where('status', 'delivered')
                                 ->exists();
         
-        // Check if user has already dismissed the popup for this session
         $popupDismissed = session()->get('review_popup_dismissed', false);
         
-        // Show popup only if: (1) has delivered order AND (2) hasn't dismissed it yet
         if ($hasDeliveredOrder && !$popupDismissed) {
             session(['review_popup_shown' => true]);
         } else {
@@ -168,15 +166,14 @@ class PorkHubController extends Controller
     }
 
 
-// Show edit user form
     public function editUser($id)
     {
-        $user = \App\Models\User::findOrFail($id);
+        $user = User::findOrFail($id);
         return view('porkhub.updateUser', compact('user'));
     }
     public function updateUser(Request $request, $id)
     {
-        $user = \App\Models\User::findOrFail($id);
+        $user = User::findOrFail($id);
 
         $rules = [
             'name' => 'required|string|max:255',
@@ -194,10 +191,9 @@ class PorkHubController extends Controller
         return redirect('/dashboard')->with('success', 'User updated successfully.');
     }
 
-
     public function deleteUser($id)
     {
-        $user = \App\Models\User::findOrFail($id);
+        $user = User::findOrFail($id);
 
         if ($user->id === auth()->id()) {
             return redirect('/dashboard')->with('error', 'You cannot delete yourself.');

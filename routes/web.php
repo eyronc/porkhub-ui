@@ -5,7 +5,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantBranchController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -38,7 +37,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/branches/delete/{id}', [RestaurantBranchController::class, 'deleteBranch'])->name('branches.delete');
 });
 
-// User routes
 Route::middleware('auth')->group(function () {
     Route::get('/porkhub/order', [PorkHubController::class, 'placeOrder'])->name('user.menu');
     Route::get('/porkhub/userhome', [PorkHubController::class, 'userHome'])->name('user.home');
@@ -61,10 +59,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->post('/close-review-popup', function () {
-    // Mark popup as dismissed for this session
     session(['review_popup_dismissed' => true]);
-    session(['review_popup_shown' => false]);
-    
+    session(['review_popup_shown' => false]);  
     return response()->json(['success' => true]);
 })->name('review.popup.close');
 
