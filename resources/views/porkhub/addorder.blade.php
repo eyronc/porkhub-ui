@@ -101,7 +101,7 @@
                     <h3 class="font-semibold mb-2">Description</h3>
                     <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{{ $product->product_description }}</p>
                 </div>
-
+    
                 {{-- Order Form --}}
                 <form action="{{ route('cart.add', $product->id) }}" method="POST" class="space-y-4">
                     @csrf

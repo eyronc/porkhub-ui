@@ -63,16 +63,36 @@
                 <div>
                     <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">Menu</h1>
                     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">A detailed view of the menu.</p>
+
+                    {{-- Success Message --}}
+                    @if (session('success'))
+                        <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 text-green-700 dark:text-green-300 rounded-xl border border-green-200 dark:border-green-800/50 text-sm font-medium shadow-sm flex items-center gap-3 animate-fade-in">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>{{ session('success') }}</span>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Cart Button -->
-                <div class="fixed top-50 right-20 z-40">
+                <div>
                     <a href="{{ route('cart.show') }}" class="inline-flex items-center gap-1 bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-lg text-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
                         </svg>
                         <span class="font-semibold">Cart</span>
                     </a>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search products..." class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent shadow-sm">
+                    <svg class="absolute right-3 top-3.5 w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </div>
             </div>
 
@@ -84,7 +104,7 @@
                             <div class="flex items-start gap-4">
                                 <div class="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                                     @if($item->image_path)
-                                        <img src="{{ asset('storage/' . $item->image_path) }}"
+                                        <img src="{{ asset("storage/{$item->image_path}") }}"
                                              alt="{{ $item->product_name }}"
                                              class="w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                                     @else
@@ -138,6 +158,25 @@
             </div>
         </div>
     </section>
+
+    <script>
+        // Search functionality
+        document.getElementById('search-input').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const articles = document.querySelectorAll('article');
+            
+            articles.forEach(article => {
+                const productName = article.querySelector('h3').textContent.toLowerCase();
+                const category = article.querySelector('p').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || category.includes(searchTerm)) {
+                    article.style.display = '';
+                } else {
+                    article.style.display = 'none';
+                }
+            });
+        });
+    </script>
 
     <!-- Review Popup -->
     @if (session('review_popup_shown'))

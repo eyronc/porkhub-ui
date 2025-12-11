@@ -45,7 +45,7 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-        return redirect()->back()->with('success', 'Product added to cart!');
+        return redirect()->route('user.menu')->with('success', 'Product added to cart!');
     }
     public function updateCart(Request $request, $id)
     {
