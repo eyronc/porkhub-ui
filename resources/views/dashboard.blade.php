@@ -355,7 +355,7 @@
     </main>
 
     <script>
-        const tabs = document.querySelectorAll('#tabs-nav a');  // only tabs
+        const tabs = document.querySelectorAll('#tabs-nav a');
         const contents = document.querySelectorAll('.tab-content');
 
         tabs.forEach(tab => {

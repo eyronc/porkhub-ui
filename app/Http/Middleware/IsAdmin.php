@@ -18,6 +18,8 @@ class IsAdmin
         if (auth()->check() && auth()->user()->role === 'admin') {
             return $next($request);
         }
-       return redirect('/')->with('error', 'Unauthorized access');
+        abort(403, 'Oops! Don\'t.');
+
     }
+
 }

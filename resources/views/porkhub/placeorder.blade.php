@@ -208,12 +208,10 @@
         </div>
 
         <script>
-            // Close button (X) - Just hides popup, will show again next time
             document.getElementById('close-popup').addEventListener('click', function() {
                 document.getElementById('review-popup').style.display = 'none';
             });
 
-            // Continue Shopping button - Dismisses popup permanently until next delivery
             document.getElementById('continue-shopping').addEventListener('click', function() {
                 document.getElementById('review-popup').style.display = 'none';
                 
