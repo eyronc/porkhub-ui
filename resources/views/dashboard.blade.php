@@ -277,6 +277,7 @@
                                 <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Items</th>
                                 <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Total</th>
                                 <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">User Address</th>
                                 <th class="px-4 py-3 text-left font-semibold text-xs text-gray-500 uppercase tracking-wider">Placed At</th>
                                 <th class="px-4 py-3 text-right font-semibold text-xs text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -326,6 +327,7 @@
                                             @endif
                                         </form>
                                     </td>
+                                    <td class="px-4 py-3 text-gray-900 dark:text-gray-100 font-semibold">{{ $order->user_address }}</td>
                                     <td class="px-4 py-3 text-gray-600 dark:text-gray-300">{{ $order->created_at->format('M d, Y H:i A') }}</td>
                                     <td class="px-4 py-3 text-right">
                                         <form action="{{ route('admin.orders.delete', $order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?');">

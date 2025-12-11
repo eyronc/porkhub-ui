@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('restaurant_branch_id')->constrained('restaurant_branches')->onDelete('cascade');
             $table->string('payment_method');
             $table->decimal('total_amount', 10, 2)->default(0.00);
+            $table->string('user_address');
             $table->string('status')->default('pending');
             $table->timestamps();
         });

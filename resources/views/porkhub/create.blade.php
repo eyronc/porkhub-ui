@@ -24,7 +24,8 @@
                 <!-- Navigation -->
                 <nav class="flex items-center space-x-8">
                     <a href="{{ url('/') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Home</a>
-                    <a href="/porkhub/list" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Products</a>
+                    <a href="{{ route(name: 'branches.list') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300">Branches</a>
+                    <a href="/porkhub/list" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Dishes</a>
                     @auth
                         <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600">Dashboard</a>
                         <form method="POST" action="{{ route('logout') }}" class="inline-block">
@@ -85,12 +86,25 @@
                         <label for="category" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Category</label>
                         <select name="category" id="category" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-transparent">
                             <option value="">Select Category</option>
-                            <option value="Food">Food</option>
-                            <option value="Drinks">Drinks</option>
+                            <option value="Main Dish">Main Dish</option>
+                            <option value="Side Dish">Side Dish</option>
                             <option value="Dessert">Dessert</option>
+                            <option value="Beverage">Beverage</option>
+                            <option value="Other">Other</option>
                         </select>
                         @error('category') <p class="mt-1 text-sm text-red-500">{{ $message }}</p> @enderror
                     </div>
+
+                    <div id="customCategoryDiv" style="display:none;">
+                        <label for="customCategory" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Custom Category</label>
+                        <input type="text" name="custom_category" id="customCategory" placeholder="Enter custom category" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                    </div>
+
+                <script>
+                    document.getElementById('category').addEventListener('change', function() {
+                        document.getElementById('customCategoryDiv').style.display = this.value === 'Other' ? 'block' : 'none';
+                    });
+                </script>
 
                     <div>
                         <label for="image" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Product Image</label>

@@ -75,7 +75,7 @@
                 <p class="mb-2"><span class="font-semibold">Restaurant Branch:</span> {{ $order->restaurantBranch->name }} - {{ $order->restaurantBranch->address }}</p>
                 <p class="mb-2"><span class="font-semibold">Payment Method:</span> {{ ucfirst($order->payment_method) }}</p>
                 <p class="mb-2"><span class="font-semibold">Status:</span> {{ ucfirst($order->status) }}</p>
-
+                <p class="mb-2"><span class="font-semibold">Address:</span> {{ $order->user_address }}</p>
                 <div class="mt-6 flex flex-col sm:flex-row gap-4">
                     <a href="{{ route('user.menu') }}" class="w-full sm:w-auto py-3 px-6 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-center transition-all duration-300">
                         Continue Shopping

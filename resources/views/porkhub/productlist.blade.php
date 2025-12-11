@@ -35,9 +35,9 @@
                         Dishes
                     </a>
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full pb-1 pt-1">
-                            Dashboard
-                        </a>
+                    <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-red-600 transition-all duration-300 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full pb-1 pt-1">
+                        Dashboard
+                    </a>
                         <form method="POST" action="{{ route('logout') }}" class="inline-block">
                             @csrf
                             <button type="submit" class="bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105">
@@ -45,12 +45,12 @@
                             </button>
                         </form>
                     @else
-                        @if (Route::has('login'))
-                            <a href="{{ route('login') }}" class="bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105">
-                                Login
-                            </a>
-                        @endif
+                        <a href="{{ route('login') }}" class="bg-red-600 text-white text-sm font-semibold px-5 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105">
+                            Login
+                        </a>
                     @endauth
+
+
                 </nav>
             </div>
         </div>
@@ -103,7 +103,7 @@
                             All Products
                         </h2>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            Showing {{ count($product) }} item(s) in your catalog.
+                            Total of {{ count($product) }} item(s) in your catalog.
                         </p>
                     </div>
 
@@ -387,7 +387,7 @@
                                     </td>
                                     <td class="px-4 py-3 align-top">
                                         @if($item->image_path)
-                                            <img src="{{ asset('storage/' . $item->image_path) }}"
+                                            <img src="{{ asset('storage') . '/' . $item->image_path }}"
                                                  alt="{{ $item->product_name }}"
                                                  class="w-16 h-16 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                                         @else

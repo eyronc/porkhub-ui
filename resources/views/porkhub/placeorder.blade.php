@@ -154,8 +154,14 @@
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
                     Thank you for choosing us! Please take a moment to leave a review for your order.
                 </p>
-                <div class="mt-4 flex justify-end gap-4">
-                    <a href="{{ route('user.reviews') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow-sm">
+                <div class="mt-4 flex justify-between gap-4">
+                    <!-- Continue Shopping Button (Left) -->
+                    <button id="continue-shopping" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gray-500 hover:bg-gray-600 text-white rounded-md shadow-sm transition-all duration-300">
+                        Continue Shopping
+                    </button>
+                    
+                    <!-- Leave a Review Button (Right) -->
+                    <a href="{{ route('user.reviews') }}" class="inline-flex items-center px-4 py-2 text-sm font-semibold bg-blue-500 hover:bg-blue-600 text-white rounded-md shadow-sm transition-all duration-300">
                         Leave a Review
                     </a>
                 </div>
@@ -163,12 +169,17 @@
         </div>
 
         <script>
+            // Close button (X) - Just hides popup, will show again next time
             document.getElementById('close-popup').addEventListener('click', function() {
                 document.getElementById('review-popup').style.display = 'none';
+            });
+
+            // Continue Shopping button - Dismisses popup permanently until next delivery
+            document.getElementById('continue-shopping').addEventListener('click', function() {
+                document.getElementById('review-popup').style.display = 'none';
                 
-                // Close the popup via fetch
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-                fetch('{{ route("review.popup.close") }}', { 
+                fetch('/close-review-popup', { 
                     method: 'POST', 
                     headers: { 
                         'X-CSRF-TOKEN': csrfToken,

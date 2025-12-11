@@ -97,11 +97,16 @@
                         @endforeach
                     </select>
 
+                    <!-- Address -->
+                    <h2 class="text-xl font-semibold mb-4 text-red-600">Delivery Address</h2>
+                    <input name="user_address" required class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 mb-6" rows="3" placeholder="Enter your delivery address"></input>
+
+
                     <!-- Payment Method -->
                     <h2 class="text-xl font-semibold mb-4 text-red-600">Payment Method</h2>
                     <select name="payment_method" required class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 mb-6">
                         <option value="Cash-on-Delivery">Cash on Delivery</option>
-                        <option value="Gcash">GCash</option>
+                        <option value="GCash">GCash</option>
                         <option value="PayMaya">PayMaya</option>
                         <option value="UnionBank">UnionBank</option>
                     </select>
@@ -129,6 +134,7 @@
                 <p class="text-sm text-gray-500">&copy; 2025 Porkhub. All rights reserved.</p>
             </div>
         </div>
+        
     </footer>
 </body>
 </html>

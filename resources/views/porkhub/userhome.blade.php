@@ -51,7 +51,7 @@
             </div>
     </header>
 
-        <!-- Main Content -->
+    <!-- Main Content -->
     <main class="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
 
         <!-- Animated Background Slider (crossfades every 5s) -->
@@ -353,6 +353,60 @@
             })();
         </script>
     </main>
+    
+    @if($reviews->isNotEmpty())
+        <section class="py-16 bg-gray-900 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-5">
+                <div class="absolute inset-0" style="background-image: url('https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&q=80'); background-size: cover; background-position: center;"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12">
+                    <h2 class="text-4xl font-bold text-white mb-2" style="font-family: 'Dancing Script', cursive;">
+                        Customer Reviews
+                    </h2>
+                    <p class="text-gray-400">See what our customers are saying</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($reviews as $review)
+                    <article class="bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-700/70 p-6 transform hover:scale-105 hover:-translate-y-2 transition-all duration-300">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-red-600/20 rounded-full flex items-center justify-center ring-2 ring-red-500/30">
+                                <span class="text-red-500 font-bold text-lg">
+                                    {{ strtoupper(substr($review->user->name, 0, 1)) }}
+                                </span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-white">{{ $review->user->name }}</h3>
+                                <p class="text-xs text-gray-400">{{ $review->created_at->diffForHumans() }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1 mb-3">
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($i <= $review->rating)
+                                    <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                    </svg>
+                                @else
+                                    <svg class="w-5 h-5 text-gray-600 fill-current" viewBox="0 0 20 20">
+                                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                    </svg>
+                                @endif
+                            @endfor
+                            <span class="ml-2 text-sm font-semibold text-gray-300">{{ $review->rating }}/5</span>
+                        </div>
+
+                        <p class="text-gray-300 text-sm leading-relaxed italic">
+                            "{{ $review->comment }}"
+                        </p>
+                    </article>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
 
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-12 border-t border-gray-800 relative overflow-hidden">

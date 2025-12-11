@@ -49,7 +49,7 @@
 
             <!-- Form Card -->
             <section class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 border border-gray-200/60 dark:border-gray-700/70">
-                <form method="POST" action="{{ url('/porkhub/edit/' . $product->id) }}" enctype="multipart/form-data" class="space-y-6">
+                <form method="POST" action="{{ url("/porkhub/edit/{$product->id}") }}" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     <!-- Product Name -->
@@ -79,19 +79,32 @@
                         </div>
                     </div>
 
-                    <!-- Category -->
-                    <div>
-                        <label for="category" class="block text-sm font-semibold mb-2">Category</label>
-                        <select id="category" name="category" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
-                            <option value="">Select Category</option>
-                            <option value="Food" {{ $product->category == 'Food' ? 'selected' : '' }}>Food</option>
-                            <option value="Drinks" {{ $product->category == 'Drinks' ? 'selected' : '' }}>Drinks</option>
-                            <option value="Dessert" {{ $product->category == 'Dessert' ? 'selected' : '' }}>Dessert</option>
-                        </select>
-                        @error('category')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <!-- Category -->
+                <div>
+                    <label for="category" class="block text-sm font-semibold mb-2">Category</label>
+                    <select id="category" name="category" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                        <option value="">Select Category</option>
+                        <option value="Main Dish" {{ $product->category == 'Main Dish' ? 'selected' : '' }}>Main Dish</option>
+                        <option value="Side Dish" {{ $product->category == 'Side Dish' ? 'selected' : '' }}>Side Dish</option>
+                        <option value="Dessert" {{ $product->category == 'Dessert' ? 'selected' : '' }}>Dessert</option>
+                        <option value="Beverage" {{ $product->category == 'Beverage' ? 'selected' : '' }}>Beverage</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    @error('category')
+                        <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div id="customCategoryDiv" style="display:none;">
+                    <label for="customCategory" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Custom Category</label>
+                    <input type="text" name="custom_category" id="customCategory" placeholder="Enter custom category" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                </div>
+
+                <script>
+                    document.getElementById('category').addEventListener('change', function() {
+                        document.getElementById('customCategoryDiv').style.display = this.value === 'Other' ? 'block' : 'none';
+                    });
+                </script>
 
                     <!-- Description -->
                     <div>
