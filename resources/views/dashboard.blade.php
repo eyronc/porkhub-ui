@@ -296,7 +296,7 @@
                                         </ul>
                                     </td>
                                     <td class="px-4 py-3 text-gray-700 dark:text-gray-200">₱{{ number_format($order->total_amount, 2) }}</td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 min-w-max">
                                         @php
                                             $status = $order->status;
                                             $disabled = in_array($status, ['delivered', 'cancelled']);
@@ -305,7 +305,7 @@
                                             @csrf
                                             <select name="status" 
                                                 {{ $disabled ? 'disabled' : '' }} 
-                                                class="border border-gray-300 dark:border-gray-600 rounded-md text-sm p-2 bg-white dark:bg-gray-700 dark:text-gray-100 w-full">
+                                                class="border border-gray-300 dark:border-gray-600 rounded-md text-sm p-2 bg-white dark:bg-gray-700 dark:text-gray-100">
                                                 @if($status == 'pending')
                                                     <option value="pending" selected>Pending</option>
                                                     <option value="shipping">Out-for-Delivery</option>
