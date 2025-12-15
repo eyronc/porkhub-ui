@@ -379,7 +379,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-white">{{ $review->user->name }}</h3>
-                                <p class="text-xs text-gray-400">{{ $review->created_at->diffForHumans() }}</p>
+                                <p class="text-xs text-gray-400">{{ optional($review->created_at)->diffForHumans() ?? 'Recently' }}</p>
                             </div>
                         </div>
 
